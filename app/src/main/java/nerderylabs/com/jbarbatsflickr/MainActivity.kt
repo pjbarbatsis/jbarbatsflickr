@@ -9,6 +9,7 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Query
 
 
 class MainActivity : AppCompatActivity() {
@@ -16,23 +17,19 @@ class MainActivity : AppCompatActivity() {
     val images: ArrayList<Image> = ArrayList()
     val testArray: ArrayList<String> = ArrayList()
 
-
-    // Should this be here??
     interface FlickrService {
 
-        //Let's test out retrofit
         @GET("flickr.galleries.getPhotos")
-        fun requestImages(api_key: String, gallery_id: String): Call
+        fun requestImages(@Query("api_key") api_key: String, @Query("gallery_id") gallery_id: String): Call
 
         /* Creation of the service
-        Q: What's this companion object stuff?
          Source: https://segunfamisa.com/posts/using-retrofit-on-android-with-kotlin
         */
         companion object Factory {
             fun create(): FlickrService {
                 val retrofit = Retrofit.Builder()
                         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                        .baseUrl("http://www.flickr.com")
+                        .baseUrl("http://api.flickr.com")
                         .addConverterFactory(GsonConverterFactory.create())
                         .build()
 
