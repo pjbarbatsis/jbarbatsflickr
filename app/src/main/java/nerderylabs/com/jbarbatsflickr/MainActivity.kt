@@ -3,8 +3,13 @@ package nerderylabs.com.jbarbatsflickr
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import com.google.gson.Gson
+import com.google.gson.JsonArray
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.activity_main.*
+import org.json.JSONArray
+import org.json.JSONException
+import org.json.JSONObject
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
@@ -20,7 +25,7 @@ class MainActivity : AppCompatActivity() {
     interface FlickrService {
 
         @GET("services/rest/?method=flickr.galleries.getPhotos")
-        fun requestImages(@Query("api_key") api_key: String, @Query("gallery_id") gallery_id: String): Observable<Result>
+        fun requestImages(@Query("api_key") api_key: String, @Query("gallery_id") gallery_id: String): Observable<Photo>
 
         /* Creation of the service
          Source: https://segunfamisa.com/posts/using-retrofit-on-android-with-kotlin
@@ -49,18 +54,26 @@ class MainActivity : AppCompatActivity() {
         //api call
 
         val apiService = FlickrService.create()
-        println("Service Create Method Executed")
-        apiService.requestImages(getString(R.string.api_key), getString(R.string.gallery_id))
 
-        addImages()
+        addImages(jsonParse(apiService))
         flickr_image_list.layoutManager = LinearLayoutManager(this)
         flickr_image_list.adapter = PhotoAdapter(photos, this)
 
     }
 
+    fun jsonParse(flickrService: FlickrService): JsonArray {
+
+        flickrService.requestImages(getString(R.string.api_key), getString(R.string.gallery_id))
+
+        return JsonArray()
+    }
+
+
+
 
     //TODO: iterate from the flickr gson/json and add the photos to the recyclerview
-    fun addImages() {
+    fun addImages(jsonArray: JsonArray) {
+
 
     }
 }

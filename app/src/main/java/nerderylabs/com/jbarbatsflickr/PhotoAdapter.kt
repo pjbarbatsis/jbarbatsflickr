@@ -22,13 +22,13 @@ class PhotoAdapter(val photos: ArrayList<nerderylabs.com.jbarbatsflickr.Photo>, 
     }
 
     // Binds each image to a view in the ArrayList
-    //TODO figure out what i need to extend from the imageType
+    //TODO figure out what i need to extend from the photoBind
     override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
-        //holder?.imageType?.//TODO = photos.get(position)
+        holder?.photoBind?.drawable photos . get (position)
     }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        val imageType = view.image_type
+        val photoBind = view.photo
     }
 }

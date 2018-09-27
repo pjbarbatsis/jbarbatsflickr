@@ -2,6 +2,6 @@
     <string name="app_name">JbarbatsFlickr</string>
     <string name="image_description">Placeholder</string>
     <string name="api_key">a993afc671b1335a64f1b5250f0ab60f</string>
-    <string name="gallery_id">66911286-72157697209149355</string>
+    <string name="gallery_id">66911286–72157697209149355</string>
     <string name="gallery_url">https://api.flickr.com/services/rest/?method=flickr.galleries.getPhotos</string>
 </resources>
