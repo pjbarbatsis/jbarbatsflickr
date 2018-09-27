@@ -3,13 +3,14 @@ package nerderylabs.com.jbarbatsflickr
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
-import android.telecom.Call
+import io.reactivex.Observable
 import kotlinx.android.synthetic.main.activity_main.*
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
+import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -19,8 +20,8 @@ class MainActivity : AppCompatActivity() {
 
     interface FlickrService {
 
-        @GET("https://api.flickr.com/services/rest/")
-        fun requestImages(@Query("api_key") api_key: String, @Query("gallery_id") gallery_id: String): Call
+        @GET("services/rest/?method=flickr.galleries.getPhotos")
+        fun requestImages(@Query("api_key") api_key: String, @Query("gallery_id") gallery_id: String): Observable<Result>
 
         /* Creation of the service
          Source: https://segunfamisa.com/posts/using-retrofit-on-android-with-kotlin
@@ -29,8 +30,8 @@ class MainActivity : AppCompatActivity() {
             fun create(): FlickrService {
                 val retrofit = Retrofit.Builder()
                         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                        .baseUrl("https://api.flickr.com/services/rest/?method=flickr.galleries.getPhotos")
                         .addConverterFactory(GsonConverterFactory.create())
+                        .baseUrl("https://api.flickr.com/")
                         .build()
 
                 // What's the :: syntax for?
@@ -49,6 +50,7 @@ class MainActivity : AppCompatActivity() {
         //api call
 
         val apiService = FlickrService.create()
+        println("Service Create Method Executed")
         apiService.requestImages(getString(R.string.api_key), getString(R.string.gallery_id))
 
         addImages()
