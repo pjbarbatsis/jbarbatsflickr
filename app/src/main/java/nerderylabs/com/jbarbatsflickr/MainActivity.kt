@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
 
     interface FlickrService {
 
-        @GET("flickr.galleries.getPhotos")
+        @GET("https://api.flickr.com/services/rest/")
         fun requestImages(@Query("api_key") api_key: String, @Query("gallery_id") gallery_id: String): Call
 
         /* Creation of the service
@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
             fun create(): FlickrService {
                 val retrofit = Retrofit.Builder()
                         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                        .baseUrl("http://api.flickr.com")
+                        .baseUrl("https://api.flickr.com/services/rest/?method=flickr.galleries.getPhotos")
                         .addConverterFactory(GsonConverterFactory.create())
                         .build()
 
@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
         //api call
 
         val apiService = FlickrService.create()
-        apiService.requestImages(R.string.api_key.toString(), R.string.gallery_id.toString())
+        apiService.requestImages(getString(R.string.api_key), getString(R.string.gallery_id))
 
         addImages()
         //addTests()
