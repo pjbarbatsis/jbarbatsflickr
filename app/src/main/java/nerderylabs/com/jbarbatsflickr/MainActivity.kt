@@ -16,7 +16,6 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
 
     val images: ArrayList<Image> = ArrayList()
-    val testArray: ArrayList<String> = ArrayList()
 
     interface FlickrService {
 
@@ -54,10 +53,8 @@ class MainActivity : AppCompatActivity() {
         apiService.requestImages(getString(R.string.api_key), getString(R.string.gallery_id))
 
         addImages()
-        //addTests()
         flickr_image_list.layoutManager = LinearLayoutManager(this)
         flickr_image_list.adapter = ImageAdapter(images, this)
-        //flickr_image_list.adapter = TestAdapter(testArray, this)
 
     }
 
@@ -65,15 +62,5 @@ class MainActivity : AppCompatActivity() {
     //TODO: iterate from the flickr gson/json and add the images to the recyclerview
     fun addImages() {
 
-    }
-
-    fun addTests() {
-        testArray.add("Pop quiz")
-        testArray.add("SAT")
-        testArray.add("ACT")
-        testArray.add("Midterms")
-        testArray.add("Finals")
-        testArray.add("Diarogu chekku")
-        testArray.add("Ooraru Intabyuu")
     }
 }
