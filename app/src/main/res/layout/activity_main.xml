@@ -7,7 +7,7 @@
     tools:context="nerderylabs.com.jbarbatsflickr.MainActivity">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/flickr_image_list"
+        android:id="@+id/flickrImageList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="@dimen/margin"

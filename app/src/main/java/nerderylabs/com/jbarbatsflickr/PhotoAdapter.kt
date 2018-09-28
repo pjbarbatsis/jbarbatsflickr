@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import kotlinx.android.synthetic.main.photo_list_item.view.*
 
 
-class PhotoAdapter(val photos: ArrayList<nerderylabs.com.jbarbatsflickr.Photo>, val context: Context) : RecyclerView.Adapter<PhotoAdapter.ViewHolder>() {
+class PhotoAdapter(var photos: List<Photo>, val context: Context) : RecyclerView.Adapter<PhotoAdapter.ViewHolder>() {
 
     // Gets the # ofimages in the list.
     override fun getItemCount(): Int {
@@ -22,13 +22,12 @@ class PhotoAdapter(val photos: ArrayList<nerderylabs.com.jbarbatsflickr.Photo>, 
     }
 
     // Binds each image to a view in the ArrayList
-    //TODO figure out what i need to extend from the photoBind
     override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
-        holder?.photoBind?.drawable photos . get (position)
+        holder?.photoTitle?.text = photos.get(position).title
     }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-
-        val photoBind = view.photo
+        val photoImage = view.photo_image
+        val photoTitle = view.photo_title
     }
 }

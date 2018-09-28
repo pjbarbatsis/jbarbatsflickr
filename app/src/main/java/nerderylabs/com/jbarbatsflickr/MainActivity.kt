@@ -3,42 +3,54 @@ package nerderylabs.com.jbarbatsflickr
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
-import com.google.gson.Gson
-import com.google.gson.JsonArray
+import android.util.Log
+import com.google.gson.GsonBuilder
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
-import org.json.JSONArray
-import org.json.JSONException
-import org.json.JSONObject
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
-import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
 
-    val photos: ArrayList<Photo> = ArrayList()
+
+    //not gonna be null, just create it later, makes it so you don't have to make a class that requires context (or whatever else) nullable.
+    lateinit var photoAdapter: PhotoAdapter
 
     interface FlickrService {
 
         @GET("services/rest/?method=flickr.galleries.getPhotos")
-        fun requestImages(@Query("api_key") api_key: String, @Query("gallery_id") gallery_id: String): Observable<Photo>
+        fun requestImages(@Query("api_key") apiKey: String, @Query("gallery_id") galleryId: String): Observable<PhotosResponse>
 
         /* Creation of the service
          Source: https://segunfamisa.com/posts/using-retrofit-on-android-with-kotlin
         */
         companion object Factory {
             fun create(): FlickrService {
+
+                // Instantiate a Gson and pass it through the factory's create method to prevent MalformedJsonException
+                val gson = GsonBuilder().setLenient().create()
+
                 val retrofit = Retrofit.Builder()
                         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                        .addConverterFactory(GsonConverterFactory.create())
+                        .addConverterFactory(GsonConverterFactory.create(gson))
                         .baseUrl("https://api.flickr.com/")
+                        // This is for catching the json and logging it in debug, network stuff handled by okhttp
+                        .client(OkHttpClient
+                                .Builder()
+                                .addInterceptor(HttpLoggingInterceptor(HttpLoggingInterceptor
+                                        .Logger { message -> Log.d("okhttp", message) }))
+                                .build())
                         .build()
 
-                // What's the :: syntax for?
+
                 return retrofit.create(FlickrService::class.java);
             }
         }
@@ -49,31 +61,19 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        //TODO: Check here to see if the most recent data that's older than 3 hours. If it is, do the api call
+        photoAdapter = PhotoAdapter(emptyList<Photo>(), this)
+        flickrImageList.layoutManager = LinearLayoutManager(this)
+        flickrImageList.adapter = photoAdapter
 
         //api call
-
+        // if NetworkOnMainThreadException occurs, be sure to use subscribeOn and observeOn to point out threads
         val apiService = FlickrService.create()
-
-        addImages(jsonParse(apiService))
-        flickr_image_list.layoutManager = LinearLayoutManager(this)
-        flickr_image_list.adapter = PhotoAdapter(photos, this)
-
-    }
-
-    fun jsonParse(flickrService: FlickrService): JsonArray {
-
-        flickrService.requestImages(getString(R.string.api_key), getString(R.string.gallery_id))
-
-        return JsonArray()
-    }
-
-
-
-
-    //TODO: iterate from the flickr gson/json and add the photos to the recyclerview
-    fun addImages(jsonArray: JsonArray) {
-
-
+        apiService.requestImages(getString(R.string.api_key), getString(R.string.gallery_id))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ response: PhotosResponse? ->
+                    // Assigning the response- serialized names are ways to reassign names to confusing json fields
+                    photoAdapter.photos = response?.result!!.photos
+                })
     }
 }
