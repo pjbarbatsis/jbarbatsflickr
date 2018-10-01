@@ -4,7 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="nerderylabs.com.jbarbatsflickr.MainActivity">
+    tools:context="com.nerderylabs.jbarbatsflickr.MainActivity">
+
+    <TextView
+        android:id="@+id/image_gallery_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/image_gallery"
+        android:gravity="center"
+        android:textColor="@android:color/holo_purple"
+        android:textSize="@dimen/textsize" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/flickrImageList"
