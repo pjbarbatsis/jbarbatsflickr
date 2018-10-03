@@ -17,17 +17,17 @@
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/flickrImageList"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="392dp"
+        android:layout_height="480dp"
         android:layout_marginBottom="@dimen/margin"
         android:layout_marginEnd="@dimen/margin"
         android:layout_marginStart="@dimen/margin"
-        android:layout_marginTop="@dimen/margin"
+        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/image_gallery_title" />
 
 
 </android.support.constraint.ConstraintLayout>

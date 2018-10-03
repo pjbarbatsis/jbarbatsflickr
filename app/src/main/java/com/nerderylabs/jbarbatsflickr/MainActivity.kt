@@ -12,7 +12,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import nerderylabs.com.jbarbatsflickr.R
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
@@ -28,8 +27,12 @@ class MainActivity : AppCompatActivity() {
 
     interface FlickrService {
 
-        @GET("services/rest/?method=flickr.galleries.getPhotos")
-        fun requestImages(@Query("api_key") apiKey: String, @Query("gallery_id") galleryId: String, @Query("format") format: String, @Query("nojsoncallback") noJsonCallback: Int): Observable<PhotosResponse>
+        @GET("services/rest/?method=flickr.people.getPublicPhotos")
+        fun requestImages(@Query("api_key") apiKey: String,
+                          @Query("user_id") userId: String,
+                          @Query("format") format: String,
+                          @Query("nojsoncallback") noJsonCallback: Int,
+                          @Query("extras") extras: String): Observable<PhotosResponse>
 
         /* Creation of the service
          Source: https://segunfamisa.com/posts/using-retrofit-on-android-with-kotlin
@@ -64,17 +67,25 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
         setupRecycler()
         //api call
         setupService()
+    }
+
+
+    private fun setupRecycler() {
+
+        photoAdapter = PhotoAdapter(this)
+        flickrImageList.layoutManager = LinearLayoutManager(this)
+        flickrImageList.adapter = photoAdapter
+
     }
 
     private fun setupService() {
         val apiService = FlickrService.create()
 
         // if NetworkOnMainThreadException occurs, be sure to use subscribeOn and observeOn to point out threads
-        apiService.requestImages(getString(R.string.api_key), getString(R.string.gallery_id), "json", 1)
+        apiService.requestImages(getString(R.string.api_key), getString(R.string.user_id), "json", 1, "url_o")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ response: PhotosResponse ->
@@ -83,13 +94,5 @@ class MainActivity : AppCompatActivity() {
                     photoAdapter.photos = response.result.photos
                     // Log.d("Photoadapter array", photoAdapter.photos.toString())
                 })
-    }
-
-    private fun setupRecycler() {
-
-        photoAdapter = PhotoAdapter(this)
-        flickrImageList.layoutManager = LinearLayoutManager(this)
-        flickrImageList.adapter = photoAdapter
-
     }
 }

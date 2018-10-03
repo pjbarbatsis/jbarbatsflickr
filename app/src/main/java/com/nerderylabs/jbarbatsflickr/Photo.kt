@@ -7,6 +7,6 @@ data class Photo(
         val id: String,
         val title: String,
         val secret: String,
-        val server: Int,
-        val farm: Int
+        val server: String,
+        val farm: String
 )

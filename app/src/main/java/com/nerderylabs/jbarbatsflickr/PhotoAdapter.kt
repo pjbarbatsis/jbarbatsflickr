@@ -2,6 +2,7 @@ package com.nerderylabs.jbarbatsflickr
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.View
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -33,7 +34,9 @@ class PhotoAdapter(val context: Context) : RecyclerView.Adapter<PhotoAdapter.Vie
 
     // Binds each image to a view in the ArrayList
     override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
-        var imageUri = photos.get(position).id
+
+        Picasso.with(context).load(constructUri(photos.get(position))).resize(600, 200)
+                .centerInside().into(holder?.photoImage)
 
         holder?.photoTitle?.text = photos.get(position).title
     }
@@ -41,5 +44,18 @@ class PhotoAdapter(val context: Context) : RecyclerView.Adapter<PhotoAdapter.Vie
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val photoImage = view.photo_image
         val photoTitle = view.photo_title
+    }
+
+    fun constructUri(photo: Photo): String {
+        //https://farm{farm-id}.staticflickr.com/{server-id}/{id}_{secret}.jpg
+
+        val sb = StringBuilder()
+        val a = "https://farm"
+        val b = ".staticflickr.com/"
+        val c = sb.append(a).append(photo.farm).append(b).append(photo.server).append("/").append(photo.id).append("_")
+                .append(photo.secret).append(".jpg").toString()
+        Log.i("photo url", c)
+        return c
+
     }
 }
