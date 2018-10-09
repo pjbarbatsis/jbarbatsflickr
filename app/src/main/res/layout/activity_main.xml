@@ -10,6 +10,7 @@
         android:id="@+id/image_gallery_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingTop="@dimen/padding"
         android:text="@string/image_gallery"
         android:gravity="center"
         android:textColor="@android:color/holo_purple"

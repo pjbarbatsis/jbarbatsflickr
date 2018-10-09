@@ -1,17 +1,27 @@
 package com.nerderylabs.jbarbatsflickr
 
+import android.content.Context
+import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import com.google.gson.GsonBuilder
+import com.nerderylabs.jbarbatsflickr.model.Timestamp
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import io.requery.Persistable
+import io.requery.android.sqlite.DatabaseSource
+import io.requery.reactivex.KotlinReactiveEntityStore
+import io.requery.sql.KotlinConfiguration
+import io.requery.sql.KotlinEntityDataStore
 import kotlinx.android.synthetic.main.activity_main.*
 import nerderylabs.com.jbarbatsflickr.R
+import net.danlew.android.joda.JodaTimeAndroid
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.joda.time.DateTime
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
@@ -24,6 +34,8 @@ class MainActivity : AppCompatActivity() {
 
     //not gonna be null, just create it later, makes it so you don't have to make a class that requires context (or whatever else) nullable.
     lateinit var photoAdapter: PhotoAdapter
+    lateinit var data: KotlinReactiveEntityStore<Persistable>
+    var handler: DBHandler = DBHandler(this, null, null, 1)
 
     interface FlickrService {
 
@@ -68,8 +80,18 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         setupRecycler()
-        //api call
-        setupService()
+
+        val dateTimeA = DateTime.now()
+        val dateTimeB = handler.findMostRecentTimestamp()?.time
+
+        //compare time of photo table to now, if difference is >3 hours, make the query
+        if (dateTimeA.millis.minus(dateTimeB?.millis!!) > 1.08E+7) {
+            //api call
+            setupService()
+            val timestamp = Timestamp(0, DateTime.now())
+            handler.removeOldestTimestamp()
+            handler.addTimestamp(timestamp)
+        }
     }
 
 
@@ -95,4 +117,5 @@ class MainActivity : AppCompatActivity() {
                     // Log.d("Photoadapter array", photoAdapter.photos.toString())
                 })
     }
+
 }

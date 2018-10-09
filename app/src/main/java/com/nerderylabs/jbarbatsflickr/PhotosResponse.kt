@@ -1,6 +1,7 @@
 package com.nerderylabs.jbarbatsflickr
 
 import com.google.gson.annotations.SerializedName
+import com.nerderylabs.jbarbatsflickr.model.Photo
 
 // Data Class that handles the responses and optionally renames the fields if they suck
 data class PhotosResponse(@SerializedName("photos") val result: Result) {

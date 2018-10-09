@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import com.nerderylabs.jbarbatsflickr.model.Photo
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.photo_list_item.view.*
 import nerderylabs.com.jbarbatsflickr.R

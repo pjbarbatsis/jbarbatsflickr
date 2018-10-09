@@ -1,4 +1,4 @@
-package com.nerderylabs.jbarbatsflickr
+package com.nerderylabs.jbarbatsflickr.model
 
 
 // Populate this with fields from the GSON/JSON whatever
