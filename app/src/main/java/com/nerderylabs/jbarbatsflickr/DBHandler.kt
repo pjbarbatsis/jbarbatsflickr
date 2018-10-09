@@ -48,26 +48,6 @@ class DBHandler(context: Context, name: String?, factory: SQLiteDatabase.CursorF
 
     }
 
-    fun findTimestamp(timestamp: Timestamp): Timestamp? {
-
-        val query = "SELECT * FROM $TABLE_TIMES WHERE $COLUMN_TIME = \"$timestamp\""
-        val db = this.writableDatabase
-        val cursor = db.rawQuery(query, null)
-        var time: Timestamp? = null
-
-        if (cursor.moveToFirst()) {
-            cursor.moveToFirst()
-
-            val id = Integer.parseInt(cursor.getString(0))
-            val formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss")
-            val timestampTwo = formatter.parseDateTime(cursor.getString(1))
-            time = Timestamp(id, timestampTwo)
-            cursor.close()
-        }
-        db.close()
-        return time
-    }
-
     fun findMostRecentTimestamp(): Timestamp? {
 
         val query = "SELECT * FROM $TABLE_TIMES ORDER BY $COLUMN_ID DESC LIMIT 1"
@@ -79,6 +59,7 @@ class DBHandler(context: Context, name: String?, factory: SQLiteDatabase.CursorF
             cursor.moveToFirst()
 
             val id = Integer.parseInt(cursor.getString(0))
+            Log.d("id", cursor.getString(0))
             Log.d("time", cursor.getString(1))
             val formatter = DateTimeFormat.forPattern("MM/dd/yyyy HH:mm:ss")
             val timestamp = formatter.parseDateTime(cursor.getString(1))
