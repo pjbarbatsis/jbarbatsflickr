@@ -84,8 +84,13 @@ class MainActivity : AppCompatActivity() {
         val dateTimeA = DateTime.now()
         val dateTimeB = handler.findMostRecentTimestamp()?.time
 
+        if (handler.findMostRecentTimestamp()?.time == null) {
+            setupService()
+            val timestamp = Timestamp(0, DateTime.now())
+            handler.addTimestamp(timestamp)
+        }
         //compare time of photo table to now, if difference is >3 hours, make the query
-        if (dateTimeA.millis.minus(dateTimeB?.millis!!) > 1.08E+7) {
+        else if (dateTimeA.millis.minus(dateTimeB?.millis!!) > 1.08E+7) {
             //api call
             setupService()
             val timestamp = Timestamp(0, DateTime.now())

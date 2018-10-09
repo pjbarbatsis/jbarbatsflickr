@@ -4,6 +4,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.content.Context
 import android.content.ContentValues
+import android.util.Log
 import com.nerderylabs.jbarbatsflickr.model.Timestamp
 import org.joda.time.format.DateTimeFormat
 
@@ -16,7 +17,7 @@ class DBHandler(context: Context, name: String?, factory: SQLiteDatabase.CursorF
                 TABLE_TIMES + "("
                 + COLUMN_ID + " INTEGER PRIMARY KEY," +
                 COLUMN_TIME
-                + " TEXT," + ")")
+                + " TEXT" + ")")
         db.execSQL(CREATE_TIMES_TABLE)
     }
 
@@ -78,7 +79,8 @@ class DBHandler(context: Context, name: String?, factory: SQLiteDatabase.CursorF
             cursor.moveToFirst()
 
             val id = Integer.parseInt(cursor.getString(0))
-            val formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss")
+            Log.d("time", cursor.getString(1))
+            val formatter = DateTimeFormat.forPattern("MM/dd/yyyy HH:mm:ss")
             val timestamp = formatter.parseDateTime(cursor.getString(1))
             time = Timestamp(id, timestamp)
             cursor.close()
