@@ -4,7 +4,7 @@ import android.content.ContentValues
 import io.requery.*
 import org.joda.time.DateTime
 
-class Timestamp(id: Int, time: DateTime) {
+class TimeObject(id: Int, time: DateTime) {
 
     var id: Int = 0
     var time: DateTime? = null

@@ -1,24 +1,18 @@
 package com.nerderylabs.jbarbatsflickr
 
-import android.content.Context
-import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import com.google.gson.GsonBuilder
-import com.nerderylabs.jbarbatsflickr.model.Timestamp
+import com.nerderylabs.jbarbatsflickr.model.TimeObject
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.requery.Persistable
-import io.requery.android.sqlite.DatabaseSource
 import io.requery.reactivex.KotlinReactiveEntityStore
-import io.requery.sql.KotlinConfiguration
-import io.requery.sql.KotlinEntityDataStore
 import kotlinx.android.synthetic.main.activity_main.*
 import nerderylabs.com.jbarbatsflickr.R
-import net.danlew.android.joda.JodaTimeAndroid
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.joda.time.DateTime
@@ -86,14 +80,14 @@ class MainActivity : AppCompatActivity() {
 
         if (handler.findMostRecentTimestamp()?.time == null) {
             setupService()
-            val timestamp = Timestamp(0, DateTime.now())
+            val timestamp = TimeObject(0, DateTime.now())
             handler.addTimestamp(timestamp)
         }
         //compare time of photo table to now, if difference is >3 hours, make the query
         else if (dateTimeA.millis.minus(dateTimeB?.millis!!) > 1.08E+7) {
             //api call
             setupService()
-            val timestamp = Timestamp(0, DateTime.now())
+            val timestamp = TimeObject(0, DateTime.now())
             handler.removeOldestTimestamp()
             handler.addTimestamp(timestamp)
         }

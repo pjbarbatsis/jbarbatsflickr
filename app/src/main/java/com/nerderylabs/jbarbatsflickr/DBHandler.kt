@@ -5,7 +5,8 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.content.Context
 import android.content.ContentValues
 import android.util.Log
-import com.nerderylabs.jbarbatsflickr.model.Timestamp
+import com.nerderylabs.jbarbatsflickr.model.TimeObject
+import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 
 // https://www.techotopia.com/index.php/A_Kotlin_Android_SQLite_Database_Tutorial
@@ -14,10 +15,7 @@ class DBHandler(context: Context, name: String?, factory: SQLiteDatabase.CursorF
 
     override fun onCreate(db: SQLiteDatabase) {
         val CREATE_TIMES_TABLE = ("CREATE TABLE " +
-                TABLE_TIMES + "("
-                + COLUMN_ID + " INTEGER PRIMARY KEY," +
-                COLUMN_TIME
-                + " TEXT" + ")")
+                TABLE_TIMES + "(" + COLUMN_ID + " INTEGER PRIMARY KEY," + COLUMN_TIME + " TEXT)")
         db.execSQL(CREATE_TIMES_TABLE)
     }
 
@@ -37,37 +35,43 @@ class DBHandler(context: Context, name: String?, factory: SQLiteDatabase.CursorF
         val COLUMN_TIME = "timestamp"
     }
 
-    fun addTimestamp(timestamp: Timestamp) {
+    fun addTimestamp(timeObject: TimeObject) {
         val values = ContentValues()
-        values.put(COLUMN_TIME, timestamp.time.toString())
+        values.put(COLUMN_TIME, timeObject.time.toString())
 
         val db = this.writableDatabase
 
         db.insert(TABLE_TIMES, null, values)
         db.close()
-
     }
 
-    fun findMostRecentTimestamp(): Timestamp? {
+    fun findMostRecentTimestamp(): TimeObject {
 
         val query = "SELECT * FROM $TABLE_TIMES ORDER BY $COLUMN_ID DESC LIMIT 1"
         val db = this.writableDatabase
         val cursor = db.rawQuery(query, null)
-        var time: Timestamp? = null
+        val time: TimeObject
 
         if (cursor.moveToFirst()) {
             cursor.moveToFirst()
 
             val id = Integer.parseInt(cursor.getString(0))
+
+
             Log.d("id", cursor.getString(0))
             Log.d("time", cursor.getString(1))
-            val formatter = DateTimeFormat.forPattern("MM/dd/yyyy HH:mm:ss")
+
+            val formatter = DateTimeFormat.forPattern("yyyy/mm/dd HH:mm:ss")
             val timestamp = formatter.parseDateTime(cursor.getString(1))
-            time = Timestamp(id, timestamp)
+
+            time = TimeObject(id, timestamp)
             cursor.close()
+            db.close()
+            return time
+        } else {
+            db.close()
+            return TimeObject(0, DateTime.now())
         }
-        db.close()
-        return time
     }
 
     // "The method will use a SQL SELECT statement to search for the entry based on the [criteria]
@@ -87,6 +91,7 @@ class DBHandler(context: Context, name: String?, factory: SQLiteDatabase.CursorF
             result = true
         }
         db.close()
+
         return result
     }
 }
