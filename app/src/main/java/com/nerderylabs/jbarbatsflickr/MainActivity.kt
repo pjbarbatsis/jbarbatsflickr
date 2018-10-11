@@ -1,12 +1,15 @@
 package com.nerderylabs.jbarbatsflickr
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import com.google.gson.GsonBuilder
+import com.nerderylabs.jbarbatsflickr.helpers.DBHandler
+import com.nerderylabs.jbarbatsflickr.helpers.PhotoAdapter
 import com.nerderylabs.jbarbatsflickr.model.Photo
-import com.nerderylabs.jbarbatsflickr.model.TimeObject
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -21,6 +24,8 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 
 class MainActivity : AppCompatActivity() {
@@ -30,7 +35,6 @@ class MainActivity : AppCompatActivity() {
     lateinit var photoAdapter: PhotoAdapter
     lateinit var data: KotlinReactiveEntityStore<Persistable>
     var handler: DBHandler = DBHandler(this, null, null, 1)
-
     interface FlickrService {
 
         @GET("services/rest/?method=flickr.people.getPublicPhotos")
@@ -69,12 +73,36 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         setupRecycler()
+        setupService()
 
+        val prefs = this.getSharedPreferences("timestamp", Context.MODE_PRIVATE)
+        val c = Calendar.getInstance()
+        val default: Long = 0
+
+        if (c.timeInMillis - (prefs.getLong("timestamp", default)) > TimeUnit.MINUTES.toMillis(180)) {
+
+            Log.i("Mins since last check:", TimeUnit.MILLISECONDS.
+                    toMinutes(c.timeInMillis -
+                            (prefs.getLong("timestamp", default))).toString())
+            Log.i("Timestamp status check", "Updating")
+
+            updateAllPhotos(handler.getPhotos())
+            prefs.edit().putLong("timestamp", c.timeInMillis).apply()
+        } else {
+
+            Log.i("Mins since last check:", TimeUnit.MILLISECONDS.
+                    toMinutes(c.timeInMillis -
+                            (prefs.getLong("timestamp", default))).toString())
+            Log.i("Timestamp status check", "Not Updating")
+
+            prefs.edit().putLong("timestamp", c.timeInMillis).apply()
+        }
     }
 
 
@@ -83,10 +111,6 @@ class MainActivity : AppCompatActivity() {
         photoAdapter = PhotoAdapter(this)
         flickrImageList.layoutManager = LinearLayoutManager(this)
         flickrImageList.adapter = photoAdapter
-
-        setupService()
-
-        updateAllPhotos(handler.getPhotos())
 
     }
 
@@ -101,7 +125,6 @@ class MainActivity : AppCompatActivity() {
                     // Assigning the response- serialized names are ways to reassign names to confusing json fields
                     Log.d("response pretty print", GsonBuilder().setPrettyPrinting().create().toJson(response))
                     photoAdapter.photos = response.result.photos
-                    // Log.d("Photoadapter array", photoAdapter.photos.toString())
                 })
     }
 

@@ -1,4 +1,4 @@
-package com.nerderylabs.jbarbatsflickr
+package com.nerderylabs.jbarbatsflickr.helpers
 
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
@@ -7,9 +7,6 @@ import android.content.ContentValues
 import android.database.Cursor
 import android.util.Log
 import com.nerderylabs.jbarbatsflickr.model.Photo
-import com.nerderylabs.jbarbatsflickr.model.TimeObject
-import org.joda.time.DateTime
-import org.joda.time.format.DateTimeFormat
 
 // https://www.techotopia.com/index.php/A_Kotlin_Android_SQLite_Database_Tutorial
 // https://medium.com/coding-and-learning/android-kotlin-with-sqlite-connectivity-crud-f8a8e0158717
