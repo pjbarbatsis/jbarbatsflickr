@@ -94,25 +94,4 @@ class DBHandler(context: Context, name: String?, factory: SQLiteDatabase.CursorF
         db.close()
 
     }
-
-    fun deletePhoto(photo: Photo) {
-        val db = this.writableDatabase
-
-        // What does this part do??
-        val values = ContentValues()
-        values.put("photoID", photo.id)
-        values.put("photoTitle", photo.title)
-        values.put("photoSecret", photo.secret)
-        values.put("photoServer", photo.server)
-        values.put("photoFarm", photo.farm)
-
-        val retVal = db.delete(TABLE_PHOTOS, "_id = " + photo.id, null)
-        if (retVal >= 1) {
-            Log.v("@@@WWe", " Record deleted")
-        } else {
-            Log.v("@@@WWe", " Not deleted")
-        }
-        db.close()
-
-    }
 }

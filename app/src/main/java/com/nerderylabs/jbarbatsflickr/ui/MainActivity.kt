@@ -35,6 +35,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var photoAdapter: PhotoAdapter
     lateinit var data: KotlinReactiveEntityStore<Persistable>
     var handler: DBHandler = DBHandler(this, null, null, 1)
+
     interface FlickrService {
 
         @GET("services/rest/?method=flickr.people.getPublicPhotos")
@@ -72,8 +73,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -86,21 +85,17 @@ class MainActivity : AppCompatActivity() {
         val default: Long = 0
 
         if (c.timeInMillis - (prefs.getLong("timestamp", default)) > TimeUnit.MINUTES.toMillis(180)) {
-
             Log.i("Mins since last check:", TimeUnit.MILLISECONDS.
                     toMinutes(c.timeInMillis -
                             (prefs.getLong("timestamp", default))).toString())
             Log.i("Timestamp status check", "Updating")
-
             updateAllPhotos(handler.getPhotos())
             prefs.edit().putLong("timestamp", c.timeInMillis).apply()
         } else {
-
             Log.i("Mins since last check:", TimeUnit.MILLISECONDS.
                     toMinutes(c.timeInMillis -
                             (prefs.getLong("timestamp", default))).toString())
             Log.i("Timestamp status check", "Not Updating")
-
             prefs.edit().putLong("timestamp", c.timeInMillis).apply()
         }
     }
