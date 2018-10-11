@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import com.google.gson.GsonBuilder
+import com.nerderylabs.jbarbatsflickr.model.Photo
 import com.nerderylabs.jbarbatsflickr.model.TimeObject
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -15,7 +16,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import nerderylabs.com.jbarbatsflickr.R
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import org.joda.time.DateTime
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
@@ -75,22 +75,6 @@ class MainActivity : AppCompatActivity() {
 
         setupRecycler()
 
-        val dateTimeA = DateTime.now()
-        val dateTimeB = handler.findMostRecentTimestamp()?.time
-
-        if (handler.findMostRecentTimestamp()?.time == null) {
-            setupService()
-            val timestamp = TimeObject(0, DateTime.now())
-            handler.addTimestamp(timestamp)
-        }
-        //compare time of photo table to now, if difference is >3 hours, make the query
-        else if (dateTimeA.millis.minus(dateTimeB?.millis!!) > 1.08E+7) {
-            //api call
-            setupService()
-            val timestamp = TimeObject(0, DateTime.now())
-            handler.removeOldestTimestamp()
-            handler.addTimestamp(timestamp)
-        }
     }
 
 
@@ -99,6 +83,10 @@ class MainActivity : AppCompatActivity() {
         photoAdapter = PhotoAdapter(this)
         flickrImageList.layoutManager = LinearLayoutManager(this)
         flickrImageList.adapter = photoAdapter
+
+        setupService()
+
+        updateAllPhotos(handler.getPhotos())
 
     }
 
@@ -117,4 +105,8 @@ class MainActivity : AppCompatActivity() {
                 })
     }
 
+    private fun updateAllPhotos(photos: List<Photo>) {
+        for (photo in photos)
+            handler.updatePhoto(photo)
+    }
 }
