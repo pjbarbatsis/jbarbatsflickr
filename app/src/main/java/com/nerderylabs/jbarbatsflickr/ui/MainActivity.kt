@@ -1,7 +1,6 @@
-package com.nerderylabs.jbarbatsflickr
+package com.nerderylabs.jbarbatsflickr.ui
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
@@ -9,6 +8,7 @@ import android.util.Log
 import com.google.gson.GsonBuilder
 import com.nerderylabs.jbarbatsflickr.helpers.DBHandler
 import com.nerderylabs.jbarbatsflickr.helpers.PhotoAdapter
+import com.nerderylabs.jbarbatsflickr.helpers.PhotosResponse
 import com.nerderylabs.jbarbatsflickr.model.Photo
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers

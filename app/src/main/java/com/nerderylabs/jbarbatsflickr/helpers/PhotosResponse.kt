@@ -1,4 +1,4 @@
-package com.nerderylabs.jbarbatsflickr
+package com.nerderylabs.jbarbatsflickr.helpers
 
 import com.google.gson.annotations.SerializedName
 import com.nerderylabs.jbarbatsflickr.model.Photo
