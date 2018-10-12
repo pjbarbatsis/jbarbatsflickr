@@ -31,7 +31,8 @@ import java.util.concurrent.TimeUnit
 class MainActivity : AppCompatActivity() {
 
 
-    //not gonna be null, just create it later, makes it so you don't have to make a class that requires context (or whatever else) nullable.
+    //not gonna be null, just create it later, makes it so you don't have to make a class that requires context
+    // (or whatever else) nullable.
     lateinit var photoAdapter: PhotoAdapter
     lateinit var data: KotlinReactiveEntityStore<Persistable>
     var handler: DBHandler = DBHandler(this, null, null, 1)
@@ -79,25 +80,8 @@ class MainActivity : AppCompatActivity() {
 
         setupRecycler()
         setupService()
+        checkLastTimesamp()
 
-        val prefs = this.getSharedPreferences("timestamp", Context.MODE_PRIVATE)
-        val c = Calendar.getInstance()
-        val default: Long = 0
-
-        if (c.timeInMillis - (prefs.getLong("timestamp", default)) > TimeUnit.MINUTES.toMillis(180)) {
-            Log.i("Mins since last check:", TimeUnit.MILLISECONDS.
-                    toMinutes(c.timeInMillis -
-                            (prefs.getLong("timestamp", default))).toString())
-            Log.i("Timestamp status check", "Updating")
-            updateAllPhotos(handler.getPhotos())
-            prefs.edit().putLong("timestamp", c.timeInMillis).apply()
-        } else {
-            Log.i("Mins since last check:", TimeUnit.MILLISECONDS.
-                    toMinutes(c.timeInMillis -
-                            (prefs.getLong("timestamp", default))).toString())
-            Log.i("Timestamp status check", "Not Updating")
-            prefs.edit().putLong("timestamp", c.timeInMillis).apply()
-        }
     }
 
 
@@ -117,14 +101,33 @@ class MainActivity : AppCompatActivity() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ response: PhotosResponse ->
-                    // Assigning the response- serialized names are ways to reassign names to confusing json fields
+                    // Assigning the response- serialized names are ways to reassign names to json fields
                     Log.d("response pretty print", GsonBuilder().setPrettyPrinting().create().toJson(response))
                     photoAdapter.photos = response.result.photos
                 })
     }
 
-    private fun updateAllPhotos(photos: List<Photo>) {
-        for (photo in photos)
-            handler.updatePhoto(photo)
+    // store the time and check the last applied timestamp
+    private fun checkLastTimesamp() {
+        val prefs = this.getSharedPreferences("timestamp", Context.MODE_PRIVATE)
+        val c = Calendar.getInstance()
+        val default: Long = 0
+
+        if (c.timeInMillis - (prefs.getLong("timestamp", default)) >
+                TimeUnit.MINUTES.toMillis(180)) {
+            Log.i("Mins since last check:", TimeUnit.MILLISECONDS.
+                    toMinutes(c.timeInMillis -
+                            (prefs.getLong("timestamp", default))).toString())
+            Log.i("Timestamp status check", "Updating")
+            handler.updateAllPhotos(handler.getPhotos())
+            prefs.edit().putLong("timestamp", c.timeInMillis).apply()
+        } else {
+            Log.i("Mins since last check:", TimeUnit.MILLISECONDS.
+                    toMinutes(c.timeInMillis -
+                            (prefs.getLong("timestamp", default))).toString())
+            Log.i("Timestamp status check", "Not Updating")
+            prefs.edit().putLong("timestamp", c.timeInMillis).apply()
+        }
     }
+
 }
