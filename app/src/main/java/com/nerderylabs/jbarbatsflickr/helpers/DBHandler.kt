@@ -92,6 +92,10 @@ class DBHandler(context: Context, name: String?, factory: SQLiteDatabase.CursorF
             Log.v("@@@WWe", " Not updated")
         }
         db.close()
+    }
 
+    fun updateAllPhotos(photos: List<Photo>) {
+        for (photo in photos)
+            updatePhoto(photo)
     }
 }
